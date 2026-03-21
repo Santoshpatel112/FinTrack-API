@@ -1,5 +1,6 @@
 import { User } from "../Models/User.Model";
 import bcrypt from "bcrypt";
+import { json } from "express";
 import jwt from "jsonwebtoken";
 import { use } from "react";
 export const Register=async(req,res)=>{
@@ -95,5 +96,55 @@ export const LoginUser=async (req,res)=>{
             sucess :false,
             message :"server error",
         });
+    }
+}
+
+export const getprofil=async (req,res)=>{
+    try {
+        const user=req.user;
+        
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile fetched successfully",
+      data: user,
+    });
+    } catch (error) {
+        console.log("Get profile Error",error);
+        return res.status(500),json({
+            message :"Server Error",
+            success:false
+        })
+    }
+}
+
+export const getAllUser=async(req,res)=>{
+    try {
+        const user=await User.find().select("-password");
+        c
+        if(user.length ===0){
+            return res.status(400).json({
+                message :"No User found",
+                sucess :false
+            })
+        }
+        return res.status(201).json({
+            message :"User Found Sucessfully",
+            sucess:true,
+            count :user.length,
+            User:user
+        })
+    } catch (error) {
+        console.log("User Not found",error);
+        return res.status(500).json({
+            message :"Server error",
+            sucess:false
+        })
     }
 }
