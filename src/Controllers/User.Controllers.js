@@ -43,7 +43,7 @@ export const Register = async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Register Error:", error); // 🔥 IMPORTANT
+    console.error("Register Error:", error); 
 
     return res.status(500).json({
       message: "Server Error",
