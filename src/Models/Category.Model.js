@@ -1,7 +1,7 @@
 import mongoose  from "mongoose";
 
 
-const Category=new mongoose.Schema({
+const CategorySchema=new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref :"User",
@@ -12,6 +12,7 @@ const Category=new mongoose.Schema({
         enum :["income","expences"],
         required :true
     },
-    
+},
+{timestamps:true})
 
-})
+export const Category=mongoose.model("Category",CategorySchema);

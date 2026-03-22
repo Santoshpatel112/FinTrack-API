@@ -10,6 +10,10 @@ const TransctionSchema=new mongoose.Schema({
         type :Number,
         required:true
     },
+    type :{
+        type :String,
+        enum :["amount","expences"]
+    },
     note:{
         type :String
     },

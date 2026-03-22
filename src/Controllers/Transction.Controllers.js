@@ -10,13 +10,13 @@ export const createTransction=async (req,res)=>{
             })
         }
         const {type,category,paymentmethod,amount}=req.body;
-        if(!user||!category||!paymentmethod || !amount){
+        if(!user||!category||!paymentmethod || !amount ||!type){
             return res.status(400).json({
                 message :"All field Must be required"
             })
         }
 
-        const exitingTransction=await Transction.findOne({ $or:[{userId},{amount},{date},{category}]});
+        const exitingTransction=await Transction.findOne({ $or:[{userId},{amount},{date},{category},{type}]});
         if(exitingTransction){
             return res.status(404).json({
                 message :"transiction Already Exit",
@@ -27,6 +27,7 @@ export const createTransction=async (req,res)=>{
         const newTransction= await Transction.create({
             userId,
             amount,
+            type,
             category,
             date
         })
