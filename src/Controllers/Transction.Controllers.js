@@ -1,4 +1,4 @@
-import { Transction } from "../Models/Transction.Model";
+import { Transction } from "../Models/Transction.Model.js";
 import mongoose from "mongoose";
 
 export const createTransction=async (req,res)=>{

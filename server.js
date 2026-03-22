@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 3000;
 
 
 app.use("/api/auth",authRoute);
-app.use("/api/auth",transctionRoute);
+app.use("/api/transction",transctionRoute);
 ConnectDB().then(() => {
     app.listen(PORT, () => {
         console.log(`app is listening on ${PORT}`);
