@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { User } from "../Models/User.Model";
 
 export const Authrizerole=(...role)=>{
