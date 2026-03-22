@@ -30,7 +30,7 @@ const TransctionSchema=new mongoose.Schema({
     },
     date :{
         type :Date,
-        default :Date.name()
+        default :Date.now()
     },
     createdAt :{
         type :String,

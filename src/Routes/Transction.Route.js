@@ -1,13 +1,14 @@
 import express from 'express'
 
-import {createTransction,UpdateTransctionById,DeleteTransctionById,GetAllTransction} from "./../Controllers/Transction.Controllers.js"
+import {createTransction,UpdateTransctionById,DeleteTransctionById,GetAllTransction ,GetTransctionById} from "./../Controllers/Transction.Controllers.js"
 import { authMiddleware } from '../middleware/auth.middleware.js';
 const router=express.Router();
 
 router.post("/",authMiddleware,createTransction);
-router.patch('/',authMiddleware,UpdateTransctionById);
-router.delete('/',authMiddleware,DeleteTransctionById);
+router.patch('/:id',authMiddleware,UpdateTransctionById);
+router.delete('/:id',authMiddleware,DeleteTransctionById);
 router.get("/",authMiddleware,GetAllTransction);
+router.get("/:id",authMiddleware,GetTransctionById);
 
 
 export default router;
