@@ -14,6 +14,7 @@ export const authMiddleware=async (req ,res ,next)=>{
 
         const decode=jwt.verify(token,process.env.JWT_SECRET);
 
+        next();
         req.user=await User.findById(decode.id).select("password");
     } catch (error) {
         return res.status(401).json({
