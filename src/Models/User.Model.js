@@ -10,11 +10,11 @@ const UserSchema=mongoose.Schema({
         required :[true,"Email must be required"],
         unique :[true,"Email must be unique"]
     },
-    mobNo:{
-        type :String,
-        required:[true,"Mobile must be required"],
-        unique :[true,"Mobile number must be unique"]
-    },
+   mobNo: {
+  type: String,
+  required: true,
+  unique: true
+},
     password :{
         type :String,
         required:[true,"Password must be required"],

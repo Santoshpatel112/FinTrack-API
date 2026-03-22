@@ -1,19 +1,19 @@
-import { User } from "../Models/User.Model";
+export const Authrizerole = (...role) => {
+  return (req, res, next) => {
+    if (!req.user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not authenticated",
+      });
+    }
 
-export const Authrizerole=(...role)=>{
-    return (req,res,next)=>{
-        if(!User){
-            return res.staus(404).json({
-                Susess :false,
-                message :'user not found'
-            })
-        }
-        if(!role.includes(req.User.role)){
-            return res.staus(403).json({
-                sucess :false,
-                message :"Acess Deniad"
-            });
-        }
-        next();
-    };
+    if (!role.includes(req.user.role)) {
+      return res.status(403).json({
+        success: false,
+        message: "Access Denied",
+      });
+    }
+
+    next();
+  };
 };

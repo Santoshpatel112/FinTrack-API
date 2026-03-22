@@ -1,61 +1,70 @@
-import { User } from "../Models/User.Model";
-import bcrypt from "bcrypt";
-import { json } from "express";
 import jwt from "jsonwebtoken";
-import { use } from "react";
-export const Register=async(req,res)=>{
-    
-    try {
-        const {fullname ,email,password,mobNO}=req.body;
-        if(! fullname || !email||!password|| !mobNO){
-        return res.status(400).json({
-            message :"All Fields Must Required",
-        })
+import { User } from "../Models/User.Model.js";
+import bcrypt from "bcryptjs";
+
+export const Register = async (req, res) => {
+  try {
+    const { fullname, email, password, role } = req.body;
+    const mobNo = req.body.mobNo || req.body.mobNO;
+
+    if (!fullname || !email || !password || !mobNo) {
+      return res.status(400).json({
+        message: "All fields required",
+      });
     }
 
-    const exitinguser=await User.findOne({$or:[{email},{mobNO}]});
-    if(exitinguser){
-        return res.status(409).json({
-            message :"User alredy Exit this email and mob"
-        })
+    const existingUser = await User.findOne({
+      $or: [{ email }, { mobNo }],
+    });
+
+    if (existingUser) {
+      return res.status(409).json({
+        message: "User already exists",
+      });
     }
-    const haspassword=await bcrypt.hash(password,10);
-    const newuser=await User.create({
-        fullname,
-        email,
-        mobNO,
-        password :haspassword
-    })
-    const userResponce=user.toObject();
-        delete userResponce.password;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      fullname,
+      email,
+      mobNo,
+      password: hashedPassword,
+      role: role || "user",
+    });
+
+    const userResponse = newUser.toObject();
+    delete userResponse.password;
+
     return res.status(201).json({
-        message:"User Created Sucessfully",
-        newuser,
-        data :userResponce,
-        sucess :true
-    })
-    } catch (error) {
-        console.log("Resiter Error",error);
+      success: true,
+      message: "User created successfully",
+      data: userResponse,
+    });
 
-        return res.status(500).json({
-            message :"server Error",
-            sucess :false
-        })
-    }
-}
+  } catch (error) {
+    console.error("Register Error:", error); // 🔥 IMPORTANT
+
+    return res.status(500).json({
+      message: "Server Error",
+      success: false,
+    });
+  }
+};
 
 
 export const LoginUser=async (req,res)=>{
     try {
-        const {password ,email}=rec.body;
-        if(!password || email){
+        const { password, email, mobNo} = req.body;
+
+        if (!password || (!email )) {
             return res.status(400).json({
                 message :"All fields must be requird",
                 sucess:false
             })
         }
-        const user=await User.findOne({$or:[{email},{mobNO}]});
-        if(!user){
+        const user = await User.findOne({ email });
+        if (!user) {
             return res.status(409).json({
                 message :"User does't exit",
                 sucess :false
@@ -70,16 +79,17 @@ export const LoginUser=async (req,res)=>{
             })
         }
 
-        const token=await jwt.sign(
+        const token = await jwt.sign(
             {
-                id :user_.id,
-                role:user.role
+                id: user.id,
+                role: user.role
             },
-            {expiresIn :"7d"}
-        )
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+        );
 
-        req.cookies(token);
-        const userResponce=user.toObject();
+        res.cookie("token", token, { httpOnly: true });
+        const userResponce = user.toObject();
         delete userResponce.password;
 
         return res.status(201).json({
@@ -98,7 +108,21 @@ export const LoginUser=async (req,res)=>{
         });
     }
 }
+export const logout = async (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "Logout successful",
+    });
+  } catch (error) {
+    console.log("Logout Error", error);
 
+    return res.status(500).json({
+      message: "Logout Error",
+      success: false,
+    });
+  }
+};
 export const getprofil=async (req,res)=>{
     try {
         const user=req.user;
@@ -116,19 +140,18 @@ export const getprofil=async (req,res)=>{
       data: user,
     });
     } catch (error) {
-        console.log("Get profile Error",error);
-        return res.status(500),json({
-            message :"Server Error",
-            success:false
-        })
+        console.log("Get profile Error", error);
+        return res.status(500).json({
+            message: "Server Error",
+            success: false
+        });
     }
 }
 
 export const getAllUser=async(req,res)=>{
     try {
-        const user=await User.find().select("-password");
-        c
-        if(user.length ===0){
+        const user = await User.find().select("-password");
+        if (user.length === 0) {
             return res.status(400).json({
                 message :"No User found",
                 sucess :false
