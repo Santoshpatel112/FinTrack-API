@@ -1,7 +1,4 @@
-import { User } from "../Models/User.Model";
-
 import { Transction } from "../Models/Transction.Model";
-import { use } from "react";
 import mongoose from "mongoose";
 
 export const createTransction=async (req,res)=>{
@@ -187,8 +184,52 @@ export const UpdateTransctionById=async (req,res)=>{
 
 export const DeleteTransctionById=async (req,res)=>{
     try {
-        
+        const user=req.user;
+        const transctionId=req.params.id;
+        if(!transctionId){
+            return res.status(400).json({
+                message:"Transction Id not Found",
+                sucess:false
+            })
+        }
+
+        if(!mongoose.types.ObjectId.isValid(transctionId)){
+            return res.status(400).json({
+                message :"Invalid Token",
+                sucess:false
+            })
+        }
+        const transaction=await Transction.find({
+            _id:transctionId,
+            userId:user._id
+        })
+
+        if(!transaction){
+            return res.status(404).json({
+                message :"Transction Not Found",
+                sucess:false
+            })
+        }
+        const deletetransction=await Transction.findOneAndDelete({
+            _id:transctionId,
+            userId:user._id
+        })
+        if(!deletetransction){
+            return res.status(404).json({
+                message :"Transtion Not found",
+                sucess:false
+            })
+        }
+
+        return res.status(200).json({
+            message :"Transction deleted Sucessfully",
+            sucess:true
+        })
     } catch (error) {
-        
+        console.log("Error in deleteing Transction",error);
+        return res.status(500).json({
+            message :"Server Error in Deleting Transction",
+            sucess:false
+        })
     }
 }
